@@ -1,11 +1,11 @@
 import React, { useRef } from "react";
 
-function Answers({answers, selectedAnswers, answerState, onSelect}) {
-    const shuffledAnswers = useRef();
-    if (!shuffledAnswers.current) {
-        shuffledAnswers.current = [...answers];
-        shuffledAnswers.current.sort(() => Math.random() - 0.5);
-      }
+function Answers({ answers, selectedAnswers, answerState, onSelect }) {
+  const shuffledAnswers = useRef();
+  if (!shuffledAnswers.current) {
+    shuffledAnswers.current = [...answers];
+    shuffledAnswers.current.sort(() => Math.random() - 0.5);
+  }
 
   return (
     <ul id="answers">
@@ -29,6 +29,7 @@ function Answers({answers, selectedAnswers, answerState, onSelect}) {
             <button
               onClick={() => onSelect(answer)}
               className={cssClasses}
+              disabled={answerState !== ""}
             >
               {answer}
             </button>

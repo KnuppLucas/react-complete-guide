@@ -1,61 +1,44 @@
-import React, { useRef } from "react";
+import React, { useCallback } from "react";
 import { useState } from "react";
 
 import QUESTIONS from "../questions";
-
-import quizIsCompleteImg from "../assets/quiz-complete.png";
-import QuestionTimer from "./QuestionTimer";
-import { useCallback } from "react";
-import Answers from "./Answers";
 import Question from "./Question";
+import Summary from "./Summary";
 
 function Quiz() {
-  const [answerState, setAnswerState] = useState("");
   const [userAnswers, setUserAnswers] = useState([]);
 
-  const activeQuestionIndex =
-    answerState === "" ? userAnswers.length : userAnswers.length - 1;
+  const activeQuestionIndex = userAnswers.length;
 
   const quizIsComplete = activeQuestionIndex === QUESTIONS.length;
 
-  const handleSelectAnswer = useCallback(
-    function handleSelectAnswer(userAnswer) {
-      setAnswerState("answered");
-      setUserAnswers((prevAnswer) => {
-        return [...prevAnswer, userAnswer];
-      });
+  const handleSelectAnswer = useCallback(function handleSelectAnswer(
+    selectedAnswer
+  ) {
+    setUserAnswers((prevAnswer) => {
+      return [...prevAnswer, selectedAnswer];
+    });
+  },
+  []);
 
-      setTimeout(() => {
-        if (userAnswer === QUESTIONS[activeQuestionIndex].answers[0]) {
-          setAnswerState("correct");
-        } else {
-          setAnswerState("wrong");
-        }
-
-        setTimeout(() => {
-          setAnswerState("");
-        }, 2000);
-      }, 1000);
-    },
-    [activeQuestionIndex]
+  const handleSkipAnswer = useCallback(
+    () => handleSelectAnswer(null),
+    [handleSelectAnswer]
   );
 
-  const handleSkipAnswer = useCallback(() => {
-    handleSelectAnswer(null);
-  }, [handleSelectAnswer]);
-
   if (quizIsComplete) {
-    return (
-      <div id="summary">
-        <img src={quizIsCompleteImg} alt="Quiz is complete" />
-        <h2>Quiz Completed!</h2>
-      </div>
-    );
+    console.log("here")
+    return <Summary userAnswers={userAnswers} />;
   }
 
   return (
     <div id="quiz">
-      <Question key={activeQuestionIndex} questionText={QUESTIONS[activeQuestionIndex].text} answers={QUESTIONS[activeQuestionIndex].answers} onSelectAnswer={handleSelectAnswer} answerState={answerState} selectedAnswer={userAnswers[userAnswers.length - 1]} onSkipAnswer={handleSkipAnswer}/>
+      <Question
+        key={activeQuestionIndex}
+        questionIndex={activeQuestionIndex}
+        onSelectAnswer={handleSelectAnswer}
+        onSkipAnswer={handleSkipAnswer}
+      />
     </div>
   );
 }
